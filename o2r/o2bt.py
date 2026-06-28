@@ -9,6 +9,14 @@ from bleak import BLEDevice, AdvertisementData
 from .o2pkt import o2pkt
 
 class O2BTDevice(BleakClient):
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
+
     def busy(self):
         return self.pkt is not None
 
@@ -127,7 +135,7 @@ class O2BTDevice(BleakClient):
         self.disconnect_pending = True
         asyncio.ensure_future(self.disconnect_async())
 
-    def on_disconnect(self, client):
+    def on_disconnect(self):
         print(f"[{self.name}] Disconnected")
         self.manager.queue.put_nowait((self.mac_address, "DISCONNECT", self))
 
